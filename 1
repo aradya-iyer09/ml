@@ -1,3 +1,87 @@
+ML-8
+from mlxtend.frequent_patterns import apriori, association_rules
+from mlxtend.preprocessing import TransactionEncoder
+import pandas as pd
+
+# Step 1 & 2: Dataset
+dataset = [
+    ['milk', 'bread', 'nuts', 'apple'],
+    ['milk', 'bread', 'nuts'],
+    ['milk', 'bread'],
+    ['milk', 'bread', 'apple'],
+    ['milk', 'bread', 'apple']
+
+]
+print(dataset)
+
+
+# Step 3: Transaction encoding
+te = TransactionEncoder()
+te_ary = te.fit(dataset).transform(dataset)
+df = pd.DataFrame(te_ary, columns=te.columns_)
+print(df)
+
+# Step 4 & 5: Frequent itemsets
+frequent_itemsets = apriori(df, min_support=0.6, use_colnames=True)
+
+# Step 6: Rules
+rules = association_rules(frequent_itemsets, metric="lift", min_threshold=1)
+print(frequent_itemsets)
+print(rules)
+
+
+ML-7
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.utils import shuffle
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+
+# Step 2: Generate synthetic dataset
+def true_function(X):
+    return np.sin(1.5 * np.pi * X)
+
+# Create random data points
+np.random.seed(0)
+X = np.sort(np.random.rand(100))
+y = true_function(X) + np.random.normal(0, 0.1, size=X.shape)
+
+# Step 3: Split dataset
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=1)
+X_train = X_train.reshape(-1, 1)
+X_test = X_test.reshape(-1, 1)
+
+# Step 4: Define a function to plot bias-variance tradeoff
+def plot_bias_variance(degrees):
+    train_errors = []
+    test_errors = []
+
+    for d in degrees:
+        model = Pipeline([
+            ('poly_features', PolynomialFeatures(degree=d)),
+            ('linear_regression', LinearRegression())
+        ])
+        model.fit(X_train, y_train)
+        
+        y_train_predict = model.predict(X_train)
+        y_test_predict = model.predict(X_test)
+
+        train_errors.append(mean_squared_error(y_train, y_train_predict))
+        test_errors.append(mean_squared_error(y_test, y_test_predict))
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(degrees, train_errors, label='Training Error', marker='o')
+    plt.plot(degrees, test_errors, label='Testing Error', marker='s')
+    plt.xlabel('Model Complexity (Polynomial Degree)')
+    plt.ylabel('Mean Squared Error')
+    plt.title('Bias-Variance Trade-off')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
+
 PROGRAM 1
 import pandas as pd
 import numpy as np
