@@ -1,165 +1,67 @@
-program 7
+Program 7
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.tree import DecisionTreeRegressor
-from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
-//1. Generate synthetic data
+from sklearn.metrics import mean_squared_error
+
+# Generate data
 np.random.seed(42)
 X = np.sort(np.random.rand(100, 1) * 10, axis=0)
 y = np.sin(X).ravel() + np.random.normal(0, 0.3, X.shape[0])
-X
-y
-array([[0.05522117],
- [0.20584494],
- [0.25419127],
- [0.34388521],
- [0.45227289],
- [0.46450413],
- [0.58083612],
- [0.6355835 ],
- [0.65051593],
- [0.74044652],
- [0.74550644],
- [0.88492502],
- [0.97672114],
- [1.07891427],
- [1.1586906 ],
- [1.19594246],
- [1.22038235],
- [1.39493861],
- [1.40924225],
- [1.5599452 ],
- [1.5601864 ],
- [1.70524124],
- [1.81824967],
- [1.8340451 ],
- [1.84854456],
- [1.95982862],
- [1.98715682],
- [1.99673782],
- [2.12339111],
- [2.58779982],
- [2.71349032],
- [2.8093451 ],
- [2.9122914 ],
- [2.92144649],
- [3.04242243],
- [3.04613769],
- [3.10982322],
- [3.11711076],
- [3.25183322],
- [3.25330331],
- [3.30898025],
- [3.56753327],
- [3.58465729],
- [3.66361843],
- [3.74540119],
- [3.8867729 ],
- [4.27541018],
- [4.31945019],
- [4.40152494],
- [4.56069984],
- [4.72214925],
- [4.93795596],
- [4.9517691 ],
- [5.14234438],
- [5.20068021],
- [5.22732829],
- [5.24756432],
- [5.42696083],
- [5.46710279],
- [5.61277198],
- [5.92414569],
- [5.97899979],
- [5.98658484],
- [6.01115012],
- [6.07544852],
- [6.11852895],
- [6.23298127],
- [6.37557471],
- [6.62522284],
- [6.84233027],
- [7.06857344],
- [7.08072578],
- [7.13244787],
- [7.29007168],
- [7.29606178],
- [7.31993942],
- [7.60785049],
- [7.7096718 ],
- [7.71270347],
- [7.72244769],
- [7.75132823],
- [7.85175961],
- [8.02196981],
- [8.08397348],
- [8.15461428],
- [8.28737509],
- [8.32442641],
- [8.63103426],
- [8.66176146],
- [8.87212743],
- [8.9482735 ],
- [9.09320402],
- [9.21874235],
- [9.39498942],
- [9.48885537],
- [9.50714306],
- [9.65632033],
- [9.69584628],
- [9.69909852],
- [9.86886937]])
-array([ 0.08130723, 0.11469213, 0.27899098, -0.25912331, 0.37110946,
- 0.5551133 , 0.99209134, 0.43816611, 0.36304897, 0.52409047,
- 0.95296463, 0.87249283, 0.66973845, 1.03542578, 0.94540269,
- 1.22115463, 0.72861475, 0.8862782 , 0.86934605, 0.56088664,
- 1.0887798 , 1.06929247, 0.97107337, 0.89517354, 0.53706407,
- 0.79908294, 0.81175258, 0.66996695, 0.80277968, 0.64713221,
- 0.98100091, 0.37854184, 0.30456224, 0.19603849, -0.47662361,
- 0.08735591, 0.04983316, 0.76345208, -0.1677257 , -0.02101425,
- -0.17702056, -0.76378095, -0.08586335, -0.27305722, -0.33047211,
- -0.95092053, -0.48519609, -1.34434309, -0.7760125 , -0.33138056,
- -1.29711327, -1.14455677, -0.94158973, -1.06002704, -1.34833479,
- -0.84975372, -1.17887034, -0.61329614, -1.0042949 , -0.15632959,
- -0.58635124, -0.39613464, -0.04821564, -0.63795163, -0.1380079 ,
- 0.22822948, -0.53242792, 0.14764818, 0.41337213, 0.76500843,
- 0.33601447, 0.31950337, 0.90737598, 0.93426713, 0.92350608,
- 0.96469102, 0.76585492, 1.0592815 , 1.07795857, 0.77705645,
- 1.55446812, 1.14214741, 0.62853209, 1.17063434, 0.66274484,
- 1.14367127, 1.23894544, 0.46677858, 0.98011762, 0.64877931,
- 0.70529388, 0.89456954, 0.13096454, -0.19633671, -0.3308879 ,
- -0.32701509, -0.25260952, -0.1654153 , -0.18788573, -0.18148262])
-//2. Train-test split
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
-//3. Vary model complexity: tree depth
-depths = range(1, 15)
-train_errors = []
-test_errors = []
-for depth in depths:
- model = DecisionTreeRegressor(max_depth=depth)
- model.fit(X_train, y_train)
 
- train_pred = model.predict(X_train)
- test_pred = model.predict(X_test)
+# Model training and error calculation
+train_err, test_err = [], []
+for d in range(1, 15):
+    model = DecisionTreeRegressor(max_depth=d).fit(X_train, y_train)
+    train_err.append(mean_squared_error(y_train, model.predict(X_train)))
+    test_err.append(mean_squared_error(y_test, model.predict(X_test)))
 
- train_errors.append(mean_squared_error(y_train, train_pred))
- test_errors.append(mean_squared_error(y_test, test_pred))
-Depth Train Error Test Error
-1 High High
-5 Low Low
-14 Very Low Possibly High (overfitting)
-//4. Plot errors
-plt.figure(figsize=(10, 6))
-plt.plot(depths, train_errors, label='Training Error', marker='o', color='blue')
-plt.plot(depths, test_errors, label='Testing Error', marker='s', color='red')
-plt.xlabel('Model Complexity (Tree Depth)')
-plt.ylabel('Mean Squared Error')
-plt.title('Bias-Variance Tradeoff using Decision Tree')
+# Plot
+plt.plot(range(1,15), train_err, 'o-b', label="Train Error")
+plt.plot(range(1,15), test_err, 's-r', label="Test Error")
+plt.xlabel("Tree Depth")
+plt.ylabel("MSE")
+plt.title("Bias-Variance Tradeoff")
 plt.legend()
-plt.grid(True)
-plt.tight_layout()
+plt.grid()
 plt.show()
+
+program-10
+import numpy as np
+
+# Input and Output
+X = np.array([[0.66666667, 1.0],
+              [0.33333333, 0.55555556],
+              [1.0, 0.66666667]])
+y = np.array([[0.92], [0.86], [0.89]])
+
+# Sigmoid & Derivative
+def sigmoid(x): return 1 / (1 + np.exp(-x))
+def sigmoid_deriv(x): return x * (1 - x)
+
+# Initialize weights
+np.random.seed(1)
+w1 = np.random.rand(2, 4)  # 2 inputs -> 4 hidden
+w2 = np.random.rand(4, 1)  # 4 hidden -> 1 output
+
+# Training loop
+for _ in range(10000):
+    h = sigmoid(np.dot(X, w1))         # Hidden layer
+    out = sigmoid(np.dot(h, w2))       # Output layer
+    error = y - out
+    d_out = error * sigmoid_deriv(out)
+    d_h = d_out.dot(w2.T) * sigmoid_deriv(h)
+    w2 += h.T.dot(d_out) * 0.1
+    w1 += X.T.dot(d_h) * 0.1
+
+# Final prediction
+print(X)
+print(y)
+print("Predicted Output:\n", out)
+
+
 
 
 
@@ -196,47 +98,3 @@ print(rules)
 
 
 
-PROGRAM 1
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.datasets import fetch_california_housing
-
-data = fetch_california_housing(as_frame=True)
-df = data.frame
-
-print("Dataset Sample:")
-print(df.head())
-
-def plot_histograms(df):
-    df.hist(figsize=(12, 10), bins=30, color='skyblue', edgecolor='black')
-    plt.suptitle('Histograms of Numerical Features', fontsize=16)
-    plt.tight_layout(rect=[0, 0, 1, 0.97])
-    plt.show()
-
-def plot_boxplots(df):
-    plt.figure(figsize=(14, 10))
-    for i, column in enumerate(df.columns, 1):
-        plt.subplot(3, 3, i)
-        sns.boxplot(y=df[column], color='skyblue')
-        plt.title(f"Box Plot of {column}", fontsize=12)
-    plt.tight_layout()
-    plt.show()
-
-def analyze_features(df):
-    print("\nFeature Analysis:")
-    for column in df.columns:
-        print(f"\nFeature: {column}")
-        print(f"Mean: {df[column].mean():.2f}, Median: {df[column].median():.2f}, Std Dev: {df[column].std():.2f}")
-        q1 = df[column].quantile(0.25)
-        q3 = df[column].quantile(0.75)
-        iqr = q3 - q1
-        lower_bound = q1 - 1.5 * iqr
-        upper_bound = q3 + 1.5 * iqr
-        outliers = df[(df[column] < lower_bound) | (df[column] > upper_bound)]
-        print(f"Number of Outliers: {len(outliers)}")
-
-plot_histograms(df)
-plot_boxplots(df)
-analyze_features(df)
