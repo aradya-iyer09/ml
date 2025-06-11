@@ -1,3 +1,134 @@
+ML-1 to 6
+FIND-S algorithm
+import pandas as pd
+import numpy as np
+data=pd.read_csv("ENJOYSPORT.csv")
+data
+d=np.array(data)[:,:-1]
+d
+target=np.array(data)[:,-1]
+target
+def train(c,t):
+    for i,val in enumerate(T):
+        if val==1:
+            hypo=C[i].copy()
+            break
+    for i,val in enumerate(c):
+        if t[i]==1:
+            for x in range(len(hypo)):
+                if val[x]:=hypo[x]:
+                    hypo[x]='?'
+                else:
+                    pass
+    return hypo
+print("Final hypothesis is:",train(d,target())
+
+2. Document classifier 
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import import TfidfVectorizer
+from sklearn.naive_bayes import import MultinomialNB
+from sklearn import metrics
+data = pd.read_csv("Dataset.csv") 
+print(“Dataset:\n”, data)
+
+print('The dimensions of the dataset', data.shape)
+data['Labelnum'] = data.Label.map({'pos': 1, 'neg': 0})
+x = data.Message
+y = data.Labelnum
+print(x)
+print(y)
+
+vectorizer = TfidfVectorizer()
+data = vectorizer.fit_transform(x)
+print("\n The TFIDF features of Dataset:\n")
+df = pd.DataFrame(data.toarray(), columns=vectorizer.get_feature_names())
+df.head()
+
+print("\n Train Test Split:\n")
+xtrain, xtest, ytrain, ytest = train_test_split(data, y, test_size=0.3, random_state=2)
+print('\n The total number of Training Data:', ytrain.shape)
+print('\n The total number of Test Data:', ytest.shape)
+
+clf = MultinomialNB().fit(xtrain, ytrain)
+predicted = clf.predict(xtest)
+print("\n Accuracy of the classifier is:", metrics.accuracy_score(ytest, predicted))
+print("\nConfusion Matrix is:", metrics.confusion_matrix(ytest, predicted))
+print("\nClassification Report:", metrics.classification_report(ytest, predicted))
+print("\nThe value of Precision :", metrics.precision_score(ytest, predicted))
+print("\nThe value of Recall:", metrics.recall_score(ytest, predicted))
+
+3 & 4. CHAID & CHART algorithm
+from chefboost import Chefboost as cb
+import pandas as pd
+data = pd.read_csv("Dataset.csv")
+data.head()
+
+config = {"algorithm": "CHAID"}
+tree=cb.fit(data, config)
+
+test_instance = data.iloc[2]
+test_instance
+
+cb.predict(tree, test_instance)
+
+moduleName="outputs/rules/rules"
+tree= cb.restoreTree(moduleName)
+prediction=tree.findDecision(['sunny', 'hot', 'high', weak'])
+prediction
+
+df=cb.feature_importance("outputs/rules/rules.py") 
+df
+
+5.Gradient Descent algorithm
+import numpy as np
+import matplotlib.pyplot as plt
+x=np.arrange(10)
+x
+y=(x-5)**2
+y
+plt.style.use("grayscale")
+plt.scatter(x,y)
+plt.xlabel("x-independent variable")
+plt.ylabel("y=f(x)")
+plt.show()
+
+x=0
+lr=0.2
+error=[]
+for i in range:
+    grad=2*(x-5)
+    x=x-lr*grad
+    y=(x-5)**2
+    error.append(y)
+    plt.scatter(x,y)
+    print(x)
+plt.plot(error)
+plt.show()
+
+6. Support Vector Machine 
+import numpy as np
+import matplotlib pyplot as plt 
+from sklearn import svm, datasets
+iris=datasets.load_iris()
+X=iris.data[:, :2] 
+y=iris.target
+svc=svm.SVC(kernel='linear').fit(x, y)
+x_min, x_max=X[:, ] min()-1, X[:, 0] max() + 1 
+y_min, y_max X[:,1] min()-1, X,[:, 1] max() + 1 
+h=(x_max/x_min)/100 
+xx, yy= np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
+plt.subplot(1, 1, 1) 
+Z=svc.predict(np.c_[xx.ravel(), yy.ravel()]) 
+Z=Z.reshape(xx.shape) 
+plt.contourf(xx, yy,Z, cmap=plt.cm.Paired, alpha=0.8)
+plt.scatter(X[:, 0], X[:, 1], c=y, cmap=plt.cm.Paired)
+plt.xlabel('Sepal length')
+plt.ylabel('Sepal width')
+plt.xlim(xx.min(), xx.max())
+plt.title('SVC with linear kernel')
+plt.show()
+
 Program 7
 import numpy as np
 import matplotlib.pyplot as plt
@@ -95,6 +226,55 @@ frequent_itemsets = apriori(df, min_support=0.6, use_colnames=True)
 rules = association_rules(frequent_itemsets, metric="lift", min_threshold=1)
 print(frequent_itemsets)
 print(rules)
+
+ml 11
+import tensorflow as tf
+from tensorflow.keras import datasets, layers, models, utils
+
+(x_train, y_train), (x_test, y_test) = datasets.mnist.load_data()
+x_train, x_test = x_train[..., None]/255.0, x_test[..., None]/255.0
+y_train, y_test = utils.to_categorical(y_train), utils.to_categorical(y_test)
+
+model = models.Sequential([
+    layers.Conv2D(32, 3, activation='relu', input_shape=(28,28,1)),
+    layers.MaxPooling2D(),
+    layers.Flatten(),
+    layers.Dense(128, activation='relu'),
+    layers.Dense(10, activation='softmax')
+])
+
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+model.fit(x_train, y_train, epochs=10, batch_size=32)
+
+ml 12
+ML-12
+import numpy as np
+
+# Step 2: Initialize Q-table
+R = np.array([
+    [-1, -1, -1, -1,  0, -1],
+    [-1, -1, -1,  0, -1, 100],
+    [-1, -1, -1,  0, -1, -1],
+    [-1,  0,  0, -1,  0, -1],
+    [0, -1, -1,  0, -1, 100],
+    [-1,  0, -1, -1,  0, 100]
+])
+Q = np.zeros_like(R)
+
+# Step 3: Learning
+gamma = 0.8
+epochs = 1000
+
+for i in range(epochs):
+    state = np.random.randint(0, 6)
+    actions = np.where(R[state] >= 0)[0]
+    action = np.random.choice(actions)
+    Q[state, action] = R[state, action] + gamma * np.max(Q[action])
+
+# Step 7: Normalize Q
+Q_norm = Q / np.max(Q) * 100
+print("Q-table:\n", np.round(Q_norm, 2))
+
 
 
 
